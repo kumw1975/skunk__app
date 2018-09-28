@@ -21,9 +21,32 @@ public class SkunkApp {
 //		
 //		Game updates the round in all players and resets round points and turns etc
  	
+		
+		//while currentUserCanContinue
+			//ask if they want to continue
+				//if yes play another Turn. 
+				
+		
+		
 		Game game = new Game();
 		Player activePlayer = game.getActivePlayer();
-
+		
+ 		
+		while(!game.isLastRound()){
+			
+			//Play has as many turns as they wish as long as they dont get a penalty;
+			
+			//roll the dice
+			
+			//analyze the dice
+			
+			//if no penalty -ask user if they want to roll again
+				//if user says yes -> go to step 2
+			
+			//ask user if they wish to play again
+		}
+		
+		
 		while (game.getGoal() <= 100) {
 			activePlayer = game.getActivePlayer();
 			
