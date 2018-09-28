@@ -15,6 +15,7 @@ public class Game {
 		private Player[] players;
 		private int 	 numberOfPlayers;
 		private boolean  isLastRound;
+		private Player[] lastRoundSequence;
 	
 	
 	public Game() {		
@@ -122,8 +123,16 @@ public class Game {
 		if(activePlayer.getGamePoints() > this.getGoal()){
 			this.setGoal(activePlayer.getGamePoints());
 			System.out.println("******************************************************");
-			System.out.println("New Highest Score: " + activePlayer.getGamePoints() +" by "+ activePlayer.getName());
-			System.out.println("******************************************************");						
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("New Highest Score: " + activePlayer.getGamePoints() +" set by "+ activePlayer.getName());
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
 			System.out.println("------------------------------------------------------");			
 			this.setLastRound();
 		}
@@ -194,9 +203,32 @@ public class Game {
 		this.players = playersArray;		
 	}
 	
-	public void setLastRound() {
-		this.isLastRound = true;
-	} 
+	public void setLastRound() {		
+
+		Player[] players  			= this.getPlayers();
+		Player[] lastRoundSequence 	= new Player[players.length];
+
+		int cap			 			= players.length;				
+		int playerLoc 	 			= getLoc(this.getActivePlayer());
+		
+		for (int i = 0; i < cap; i++) {
+			lastRoundSequence[i] 	= players[playerLoc%cap];
+			playerLoc++;
+		}
+		this.lastRoundSequence 		= lastRoundSequence;
+		this.isLastRound 			= true;		
+	}
+	
+	private int getLoc(Player player){		
+		int cap = this.getPlayers().length;
+		int loc = 0;		
+		for (int i = 0; i < cap; i++) {
+			if (this.getPlayers()[i].equals(player)) {
+				loc = i;
+			}
+		}
+		return loc;
+	}
 	
 	public void incrementRoundNumber() {
 		this.roundNumber++;
@@ -214,6 +246,18 @@ public class Game {
 		return numberOfChipsInKitty;
 	}
 
+	public int getRollValue() {
+		return getActivePlayer().getRollValue();
+	}
+	
+	public int getDie1RollValue() {
+		return getActivePlayer().getDie1RollValue();
+	}
+	
+	public int getDie2RollValue() {
+		return getActivePlayer().getDie2RollValue();
+	}
+	
 	public int getDoubleSkunkCount() {
 		return this.doubleSkunkCount;
 	}
@@ -323,6 +367,11 @@ public class Game {
 			input = getPlayerName();			
 		}		
 		return input;
+	}
+
+
+	public Player[] getLastRoundSequence() {
+		return this.lastRoundSequence;		
 	}
 
 
