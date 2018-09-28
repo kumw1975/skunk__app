@@ -44,6 +44,9 @@ public class SkunkApp {
 				//if user says yes -> go to step 2
 			
 			//ask user if they wish to play again
+			
+			
+			//while(penalty.trim().length == 0 ){}
 		}
 		
 		
