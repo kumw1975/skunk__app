@@ -46,21 +46,52 @@ public class Game {
 	
 	public void setActivePlayerToNextPlayer() {
 		
-		this.activePlayer 		= players[activePlayerLoc%players.length];
+		//before you set the active player to the next player. 
+		//Check this players' game score
+		
+		if(this.getActivePlayer() != null && this.getActivePlayer().getGamePoints() >= this.getGoal()){
+			this.setGoal(this.getActivePlayer().getGamePoints());
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("New High Score: " + this.getActivePlayer().getGamePoints() +" set by "+ this.getActivePlayer().getName());
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("******************************************************");
+			System.out.println("------------------------------------------------------");			
+			this.setLastRound();
+		}		
+					
+		
+		this.activePlayer 		= this.getPlayers()[this.activePlayerLoc% this.getPlayers().length];
 		if(activePlayerLoc%players.length ==0) {
 			startNewRound();			
 		}
 		this.activePlayerLoc	= activePlayerLoc+1;
-
 	}
 	
 	public void startNewRound(){
 		
+		int highScore   	= 0;
+		int roundWinnerLoc 	= 0;
+		
 		if(! this.isLastRound()) {
 			incrementRoundNumber();				
 		}
-		else{
-			
+		else {
+			//get the winner of this round
+			for (int i = 0; i < this.getPlayers().length; i++) {
+				if (this.getPlayers()[i].getGamePoints()> highScore ) {
+					highScore   = this.getPlayers()[i].getGamePoints();
+					roundWinnerLoc = i;
+				}
+			}
+			System.out.println("The winner was "+ this.getPlayers()[roundWinnerLoc].getName());
+			System.out.println("Ask how winner wants to distribute the chips");
 		}
 	}
 	
@@ -73,7 +104,9 @@ public class Game {
 		String penaltyDetails = "";
 		
 		if(penalty.equalsIgnoreCase("OneSkunk")){
-	
+
+			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
+			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());		
 			this.resetActivePlayersRoundPoints();	
 			activePlayer.takeNumberOfChips(1);
 		 	this.addChipsToKittyFromActivePlayer(1);	
@@ -86,7 +119,7 @@ public class Game {
 		else if(penalty.equalsIgnoreCase("TwoSkunks")){
 
 			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			this.resetActivePlayersRoundPoints();			
+			this.resetActivePlayersGamePoints();;			
 			activePlayer.takeNumberOfChips(4);			
 		 	this.addChipsToKittyFromActivePlayer(4);	
 		 	
@@ -100,6 +133,7 @@ public class Game {
 		else if(penalty.equalsIgnoreCase("SkunkAndDeuce")){
 			
 			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
+			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());	
 			this.resetActivePlayersRoundPoints();			
 			activePlayer.takeNumberOfChips(2);			
 		 	this.addChipsToKittyFromActivePlayer(2);	
@@ -114,35 +148,27 @@ public class Game {
 			
 			activePlayer.incrementTotalTurnsTaken();
 			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			activePlayer.setTurnPoints(activePlayer.getTurnPoints()+activePlayer.getRollValue());
+			activePlayer.setTurnPoints(activePlayer.getRollValue());
 			activePlayer.setRoundPoints(activePlayer.getRoundPoints()+activePlayer.getRollValue());	
 			activePlayer.setGamePoints(activePlayer.getGamePoints()+activePlayer.getRollValue());
 		}
 		
 		
-		if(activePlayer.getGamePoints() > this.getGoal()){
-			this.setGoal(activePlayer.getGamePoints());
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("New Highest Score: " + activePlayer.getGamePoints() +" set by "+ activePlayer.getName());
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("------------------------------------------------------");			
-			this.setLastRound();
-		}
-		
 		if (penalty.trim().length()>0) {
-			activePlayer.incrementTotalTurnsTaken();
-		 	this.setActivePlayerToNextPlayer();
+			
+			if (!isLastRound) {
+				activePlayer.incrementTotalTurnsTaken();
+			 	this.setActivePlayerToNextPlayer();
+	
+				System.out.println("************** THE PENALTY IS "+ penalty + " ************** ");
+				System.out.println(penaltyDetails);				
+			}
+			else {
+				activePlayer.incrementTotalTurnsTaken();
+				System.out.println("************** THE PENALTY IS "+ penalty + " ************** ");
+				System.out.println(penaltyDetails);					
+			}
 
-			System.out.println("************** THE PENALTY IS "+ penalty + " ************** ");
-			System.out.println(penaltyDetails);
 			
 		}
 	}
@@ -160,12 +186,18 @@ public class Game {
 		
 	}
 
+	private void resetActivePlayersGamePoints() {
+		this.getActivePlayer().setGamePoints(0);;
+		
+	}
+
 
 	public String analyzeDiceValues() {
 
 		String result = "";
 		Player activePlayer = this.getActivePlayer();
 		
+		//roll (1 and 3-6) -> rolled 1 skunk a 3 or a 4 or a 5 or a 6
 		if ((activePlayer.getDie1RollValue()==1 && activePlayer.getDie2RollValue()>2  ) 
 		|| ( activePlayer.getDie1RollValue()>2  && activePlayer.getDie2RollValue()==1)){
 	
@@ -371,7 +403,8 @@ public class Game {
 
 
 	public Player[] getLastRoundSequence() {
-		return this.lastRoundSequence;		
+		this.setPlayers(this.lastRoundSequence);
+		return this.getPlayers();		
 	}
 
 

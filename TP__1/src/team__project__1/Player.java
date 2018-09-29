@@ -37,11 +37,11 @@ public class Player extends Dice{
 	}
 
 	public void setPlayerNumber(int playerNumber) {
-		this.playerNumber 				= playerNumber;
+		this.playerNumber = playerNumber;
 	}
 	
 	public void setNumberOfChips(int numberOfChips) {
-		this.numberOfChips 				= numberOfChips;
+		this.numberOfChips = numberOfChips;
 	} 	
 	
 	public int getNumberOfChips() {

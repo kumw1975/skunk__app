@@ -40,7 +40,7 @@ public class SkunkApp {
 			
 			activePlayer = game.getActivePlayer();
 			
-			System.out.println("\nROUND NUMBER " +game.getRoundNumber()+" :: BEFORE THE ROLL");	
+			System.out.println("\nROUND " +game.getRoundNumber()+" :: "+activePlayer.getName()+" BEFORE THE ROLL");	
 			System.out.println("------------------------------------------------------");
 			System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
 			System.out.println("------------------------------------------------------");
@@ -49,16 +49,14 @@ public class SkunkApp {
 			
 			if(activePlayer.getTurnsTakenInCurrentRound() == 0) {
 				
-				System.out.println("IT IS " +activePlayer.getName()+"'s TURN");	
-				activePlayer.roll();
-				System.out.println("Roll value: "+ game.getRollValue());
-				System.out.println("D1 value: "  + game.getDie1RollValue());
-				System.out.println("D2 value: "  + game.getDie2RollValue());
+ 				activePlayer.roll();
+				System.out.println("IT IS " +activePlayer.getName()+"'s TURN \n"  +activePlayer.getName()+ " Rolled :: Roll value: "+ game.getRollValue() + " =>"+"D1 value: "  + game.getDie1RollValue() +" & "+ "D2 value: "  + game.getDie2RollValue());	
+
 				
 				penalty = game.analyzeDiceValues();
 				game.updatePlayerMetrics(penalty);
 
-				System.out.println("ROUND NUMBER " +game.getRoundNumber()+" :: AFTER THE ROLL");	
+				System.out.println("\nROUND " +game.getRoundNumber()+" :: TURN: "+ (activePlayer.getTurnsTakenInCurrentRound()) +activePlayer.getName()+"'s RESULTS  AFTER THE ROLL");	
 				System.out.println("------------------------------------------------------");
 				System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
 				System.out.println("------------------------------------------------------");
@@ -68,7 +66,7 @@ public class SkunkApp {
 			}
 			else{
 				//ask player if they would like to roll again				
-				System.out.println("Would you like to roll again? ->Enter Y/N");
+				System.out.println(activePlayer.getName()+ ", Would you like to roll again? ->Enter Y/N");
 				
 				try {
 			
@@ -76,31 +74,30 @@ public class SkunkApp {
 					input 	= reader.readLine();
 					
 					if(input.equalsIgnoreCase("Y")){
+						System.out.println("------------------------------------------------------");
 
-						System.out.println("\nROUND NUMBER " +game.getRoundNumber()+" :: BEFORE THE ROLL");	
+						System.out.println("\nROUND " +game.getRoundNumber()+" :: "+activePlayer.getName()+" BEFORE THE ROLL");	
 						System.out.println("------------------------------------------------------");
 						System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
 						System.out.println("------------------------------------------------------");
 
 						System.out.println(activePlayer);
 						
-						System.out.println("IT IS " +activePlayer.getName()+"'s TURN");	
 						activePlayer.roll();
-						System.out.println("Roll value: "+ game.getRollValue());
-						System.out.println("D1 value: "  + game.getDie1RollValue());
-						System.out.println("D2 value: "  + game.getDie2RollValue());
+						System.out.println("IT IS " +activePlayer.getName()+"'s TURN \n"  +activePlayer.getName()+ " Rolled :: Roll value: "+ game.getRollValue() + " =>"+"D1 value: "  + game.getDie1RollValue() +" & "+ "D2 value: "  + game.getDie2RollValue());	
+
 						
 						penalty = game.analyzeDiceValues();
 						game.updatePlayerMetrics(penalty);
+						System.out.println("------------------------------------------------------");
 
-						System.out.println("ROUND NUMBER " +game.getRoundNumber()+" :: AFTER THE ROLL");	
+						System.out.println("\nROUND " +game.getRoundNumber()+" :: "+ (activePlayer.getTurnsTakenInCurrentRound()-1) +"RESULTS"+activePlayer.getName()+" AFTER THE ROLL");	
 						System.out.println("------------------------------------------------------");
 						System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
 						System.out.println("------------------------------------------------------");
 
 						System.out.println(activePlayer);					
-						input = "";
-					}
+ 					}
 					else{
 						
 						game.setActivePlayerToNextPlayer();
@@ -123,9 +120,85 @@ public class SkunkApp {
 		System.out.println("This is the last round");		
 		Player[] p = game.getLastRoundSequence();
 		
-		for (int i = 0; i < p.length; i++) {
+		
+		for (int i = 1; i < p.length; i++) {
 			System.out.println("Player " +i+ " " +  p[i].getName() + " but is actually Player "+ p[i].getPlayerNumber());
+
+			
+			while(!activePlayer.equals(p[0])) {
+				activePlayer = game.getActivePlayer();				
+				System.out.println("Last Round active player");
+				System.out.println(activePlayer);
+				
+				if(activePlayer.getTurnsTakenInCurrentRound() == 0) {
+					
+ 					activePlayer.roll();
+					System.out.println("IT IS " +activePlayer.getName()+"'s TURN \n"  +activePlayer.getName()+ " Rolled :: Roll value: "+ game.getRollValue() + " =>"+"D1 value: "  + game.getDie1RollValue() +" & "+ "D2 value: "  + game.getDie2RollValue());	
+
+					
+					penalty = game.analyzeDiceValues();
+					game.updatePlayerMetrics(penalty);
+
+					System.out.println("------------------------------------------------------");
+					System.out.println("ROUND NUMBER " +game.getRoundNumber()+" :: AFTER THE ROLL");	
+					System.out.println("------------------------------------------------------");
+					System.out.print ("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
+					System.out.println("------------------------------------------------------");
+
+					System.out.println(activePlayer);						
+				}
+				else{
+					//ask player if they would like to roll again				
+					System.out.println("Would you like to roll again? ->Enter Y/N");
+					
+					try {
+				
+						reader 	= new BufferedReader(new InputStreamReader(System.in));
+						input 	= reader.readLine();
+						
+						if(input.equalsIgnoreCase("Y")){
+							System.out.println("------------------------------------------------------");
+							System.out.println("\nROUND NUMBER " +game.getRoundNumber()+" :: BEFORE THE ROLL");	
+							System.out.println("------------------------------------------------------");
+							System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
+							System.out.println("------------------------------------------------------");
+
+							System.out.println(activePlayer);
+							
+ 							activePlayer.roll();
+							System.out.println("IT IS " +activePlayer.getName()+"'s TURN \n"  +activePlayer.getName()+ " Rolled :: Roll value: "+ game.getRollValue() + " =>"+"D1 value: "  + game.getDie1RollValue() +" & "+ "D2 value: "  + game.getDie2RollValue());	
+
+							
+							penalty = game.analyzeDiceValues();
+							game.updatePlayerMetrics(penalty);
+
+							System.out.println("------------------------------------------------------");
+							System.out.println("ROUND NUMBER " +game.getRoundNumber()+" :: AFTER THE ROLL");	
+							System.out.println("------------------------------------------------------");
+							System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + game.getNumberOfChipsInKitty());
+							System.out.println("------------------------------------------------------");
+
+							System.out.println(activePlayer);					
+							input = "";
+						}
+						else{
+							
+							game.setActivePlayerToNextPlayer();
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}				
+			}		
 		}
+		
+		
+		//get the winner
+		//distribute chips
+		
+		System.out.println("Thanks for playing Skunk :) GAME OVER");
+		
 		
  
 		try {
