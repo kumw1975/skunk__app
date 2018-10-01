@@ -2,16 +2,29 @@ package team__project__1;
 
 
 public class Die{
+	
 	private int rollValue;
 	private int rollPosition;
-	private final int[] rollValues = new int[]{1,2,3,4,5,6,5,4,3,2,1};
+	/* @Param rollValues::(For Testable Die)
+	  We will put the testable die values here so that this is controlled by the Die Class
+	  We can change this (remove final) and give it a getter and setter if we would like to 
+	  access or modify it from another class with the test engineers own values
+	*/
+	private int[] rollValues;
 	private boolean isTestableDie;
 		
 	public Die(){}
 	
-	public Die(boolean isTestable){
+	/*
+	 This Overloaded constructor will build a predictable die based on predetermined roll (values)
+	 The random nature of rolling dice makes it tricky to test your evolving SkunkApp. 
+	 Thus, start by modifying Die to allow it to be initialized with
+	  a sequence of "pre-programmed" die values returned 
+	 */
+	public Die(int[] rollValues){
+		this.rollValues = rollValues;
 		this.rollPosition=0;
-		this.isTestableDie = isTestable;
+		this.isTestableDie = true;
 	}	
 	
 	// getter or accessor method
@@ -26,7 +39,11 @@ public class Die{
 	
 	// note how this changes Die's state, but doesn't return anything
 	public void roll(){
-		
+		/*
+		 The random nature of rolling dice makes it tricky to test your evolving SkunkApp. 
+		 Thus, start by modifying Die to allow it to be initialized with
+		  a sequence of "pre-programmed" die values returned 
+		 */		
 		if(this.isTestableDie){
 			int rollValue = rollValues[this.rollPosition%this.rollValues.length];
 			setRollValue(rollValue);		
