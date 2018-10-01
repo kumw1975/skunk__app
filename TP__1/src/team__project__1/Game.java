@@ -1,24 +1,46 @@
 package team__project__1;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class Game {
 	
-		private int 	 goal;
-		private int 	 roundNumber;
-		private int 	 numberOfChipsInKitty;
-		private int 	 activePlayerLoc;
-		private int 	 doubleSkunkCount;
-		private Player 	 activePlayer;	
-		private Player[] players;
-		private int 	 numberOfPlayers;
-		private boolean  isLastRound;
-		private Player[] lastRoundSequence;
+	/*
+	 
+	 start Game:: USERINPUT ::=> #players, player names
+	 	initialize Players
+	 	
+	 	start Round()
+	 		initialize Round Metrics
+	 			Start Turn()
+	 				initialize Turn Metrics
+	 				roll()
+	 				analyze dice values
+	 				update Turn Metrics
+	 				askToRollAgain()
+	 					if y:go to roll() else: go to endTurn()
+	 			end Turn() :: 
+	 		Update Round Metrics
+	 	end Round()
+	 	
+	 	get Winner()
+	 	displayChipDistributionOptions()
+	 	distributeChips()
+	 
+	 
+	 */
 	
 	
-	public Game() {		
+	private int 	 goal;
+	private int 	 roundNumber;
+	private int 	 numberOfChipsInKitty;
+	private int 	 activePlayerLoc;
+	private int 	 doubleSkunkCount;
+	private Player 	 activePlayer;	
+	private Player[] players;
+	private int 	 numberOfPlayers;
+	private boolean  isLastRound;
+	private Player[] lastRoundSequence;	
+	
+	public Game(){
 		
 		this.goal 					= 100; 
 		this.roundNumber  			= 0; 
@@ -33,176 +55,159 @@ public class Game {
 		this.numberOfPlayers = players.length;
 		
 		System.out.println("------------------------------------------------------");
-		System.out.println("Player Info\n------------------------------------------------------");
+		System.out.println("PLAYER INFO\n------------------------------------------------------");
 		for (int i = 0; i < players.length; i++) {	
 			players[i].setPlayerNumber(i+1);
 			String name = (  (i+1) < 10 ) ? " "+(i+1)+" : "+players[i].getName() : (i+1)+" : "+players[i].getName();
 			System.out.println("Player "+ name);
 		}
-		setActivePlayerToNextPlayer();
-		//End Testing (Dev) Snippet
+		//Simulate last round
+		players[1].setGamePoints(100);
+		players[1].setPreviousMetrics();
+
+		//End Testing (Dev) Snippet		
 	}
 	
 	
-	public void setActivePlayerToNextPlayer() {
-		
-		//before you set the active player to the next player. 
-		//Check this players' game score
-		
-		if(this.getActivePlayer() != null && this.getActivePlayer().getGamePoints() >= this.getGoal()){
-			this.setGoal(this.getActivePlayer().getGamePoints());
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("New High Score: " + this.getActivePlayer().getGamePoints() +" set by "+ this.getActivePlayer().getName());
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("******************************************************");
-			System.out.println("------------------------------------------------------");			
-			this.setLastRound();
-		}		
-					
-		
-		this.activePlayer 		= this.getPlayers()[this.activePlayerLoc% this.getPlayers().length];
-		if(activePlayerLoc%players.length ==0) {
-			startNewRound();			
+	public void startRound(){
+		//initialize Round metrics
+ 		roundNumber++;
+		for (int i = 0; i < players.length; i++) {	
+			players[i].setRoundPoints(0);
+			players[i].setTurnsTakenInCurrentRound(0);
 		}
-		this.activePlayerLoc	= activePlayerLoc+1;
+		activePlayerLoc = 0;
 	}
 	
-	public void startNewRound(){
+	public void startTurn(){
 		
+		if (!isLastRound) {
+			activePlayer = players[activePlayerLoc];
+		}
+		else{
+			activePlayer = players[activePlayerLoc];
+			System.out.println(activePlayerLoc+ " ACTIVE PLAYER SET TO "+ activePlayer.getName());
+		}		
+		
+		//inititalize Turn Metrics
+		activePlayer.setTurnPoints(0);
+		activePlayer.setTurnsTakenInCurrentRound(0); 
+		
+		String penalty 			= "";
+		BufferedReader reader 	= null;
+		String input 			= "Y";		
+		String status 			= "";		
+		
+		while(penalty.trim().length() == 0 && input.trim().equalsIgnoreCase("Y")){
+			try {	
+				activePlayer.roll();
+
+				int previousNumberOfChipsInKitty = numberOfChipsInKitty;
+				
+				status = "ROUND " + roundNumber+ " TURN " +(activePlayer.getTurnsTakenInCurrentRound()+1);
+				status = status   + " FOR "+ activePlayer.getName() + " ****** " + activePlayer.getName() +" ROLLED \t::"+ activePlayer.getRollValue();
+				status = status   + " => " + activePlayer.getDie1RollValue() +" + "+  activePlayer.getDie2RollValue();
+
+				System.out.println("******************************************************");
+				System.out.println(status);				
+				System.out.println("******************************************************");
+
+				penalty = analyzeDiceValues();
+				updateTurnMetrics(penalty);
+				
+				System.out.println("------------------------------------------------------");
+				System.out.println("GAME INFO \t\t\t\t: OLD \t=> NEW" );
+				System.out.println("------------------------------------------------------");
+				System.out.println("NUMBER OF CHIPS IN THE GAME'S KITTY \t: " + previousNumberOfChipsInKitty +" \t=> "+  numberOfChipsInKitty);
+				
+				System.out.println(activePlayer);
+				
+				if(penalty.trim().length() == 0 ) {
+					System.out.println(activePlayer.getName()+ ", Would you like to roll again? -> Enter Y/N");
+					reader 	= new BufferedReader(new InputStreamReader(System.in));
+					input 	= reader.readLine();					
+				}				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}		
+		activePlayerLoc++;	
+	}
+	
+	public void play(){		
+		while (!isLastRound) {
+			startRound();
+			for (int i = 0; i < players.length; i++) {
+				startTurn();
+				if(activePlayer.getGamePoints() >= goal){
+					goal =(activePlayer.getGamePoints());
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("New High Score: " + goal +" set by "+ activePlayer.getName());
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("******************************************************");
+					System.out.println("------------------------------------------------------");			
+					this.setLastRound();
+					i = players.length; 
+					System.out.println("STARTING THE LAST ROUND");
+				}				
+			}			
+		}
+			
+ 		for (int i = 1; i < players.length; i++) {
+			startTurn();
+
+			if(activePlayer.getGamePoints() >= goal){
+				goal =(activePlayer.getGamePoints());
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("New High Score: " + goal +" set by "+ activePlayer.getName());
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("******************************************************");
+				System.out.println("------------------------------------------------------");			
+			}				
+			
+		}			
+
+		//get the winner 
 		int highScore   	= 0;
 		int roundWinnerLoc 	= 0;
 		
-		if(! this.isLastRound()) {
-			incrementRoundNumber();				
-		}
-		else {
-			//get the winner of this round
-			for (int i = 0; i < this.getPlayers().length; i++) {
-				if (this.getPlayers()[i].getGamePoints()> highScore ) {
-					highScore   = this.getPlayers()[i].getGamePoints();
-					roundWinnerLoc = i;
-				}
+		for (int i = 0; i < players.length; i++) {
+			if (players[i].getGamePoints()> highScore ) {
+				highScore   = players[i].getGamePoints();
+				roundWinnerLoc = i;
 			}
-			System.out.println("The winner was "+ this.getPlayers()[roundWinnerLoc].getName());
-			System.out.println("Ask how winner wants to distribute the chips");
 		}
-	}
-	
-	
-	
-	public void updatePlayerMetrics(String penalty){
+		System.out.println("The winner was "+ players[roundWinnerLoc].getName());
+		System.out.println("Ask how winner wants to distribute the chips");
 		
-		
-		Player activePlayer   = this.getActivePlayer();
-		String penaltyDetails = "";
-		
-		if(penalty.equalsIgnoreCase("OneSkunk")){
-
-			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());		
-			this.resetActivePlayersRoundPoints();	
-			activePlayer.takeNumberOfChips(1);
-		 	this.addChipsToKittyFromActivePlayer(1);	
-			
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled One Skunk ::" + activePlayer.showRollDetails()+"\n");
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all round points &  1 chip (added to kitty)");
-		 	penaltyDetails = penaltyDetails + ("\n******************************************************");			 	
-		}
-		
-		else if(penalty.equalsIgnoreCase("TwoSkunks")){
-
-			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			this.resetActivePlayersGamePoints();;			
-			activePlayer.takeNumberOfChips(4);			
-		 	this.addChipsToKittyFromActivePlayer(4);	
-		 	
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled Two Skunks ::" + activePlayer.showRollDetails()+"\n");
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all game points &  4 chips (added to kitty)");
-		 	penaltyDetails = penaltyDetails + ("\n******************************************************");	
-
-			
-		}
-		
-		else if(penalty.equalsIgnoreCase("SkunkAndDeuce")){
-			
-			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());	
-			this.resetActivePlayersRoundPoints();			
-			activePlayer.takeNumberOfChips(2);			
-		 	this.addChipsToKittyFromActivePlayer(2);	
- 		 	
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled One Skunk and a Deuce ::" + activePlayer.showRollDetails()+"\n");
-		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all round points &  2 chips (added to kitty)");
-		 	penaltyDetails = penaltyDetails + ("\n******************************************************");	
-
-		}
-		
-		else{
-			
-			activePlayer.incrementTotalTurnsTaken();
-			activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
-			activePlayer.setTurnPoints(activePlayer.getRollValue());
-			activePlayer.setRoundPoints(activePlayer.getRoundPoints()+activePlayer.getRollValue());	
-			activePlayer.setGamePoints(activePlayer.getGamePoints()+activePlayer.getRollValue());
-		}
-		
-		
-		if (penalty.trim().length()>0) {
-			
-			if (!isLastRound) {
-				activePlayer.incrementTotalTurnsTaken();
-			 	this.setActivePlayerToNextPlayer();
-	
-				System.out.println("************** THE PENALTY IS "+ penalty + " ************** ");
-				System.out.println(penaltyDetails);				
-			}
-			else {
-				activePlayer.incrementTotalTurnsTaken();
-				System.out.println("************** THE PENALTY IS "+ penalty + " ************** ");
-				System.out.println(penaltyDetails);					
-			}
-
-			
-		}
-	}
-	
-	
-
-	private void addChipsToKittyFromActivePlayer(int i) {
-		this.addChipsToKitty(i);
 		
 	}
 
-
-	private void resetActivePlayersRoundPoints() {
-		this.getActivePlayer().setRoundPoints(0);
-		
-	}
-
-	private void resetActivePlayersGamePoints() {
-		this.getActivePlayer().setGamePoints(0);;
-		
-	}
-
-
-	public String analyzeDiceValues() {
+	
+	private String analyzeDiceValues() {
 
 		String result = "";
-		Player activePlayer = this.getActivePlayer();
+		Player activePlayer = this.activePlayer;
 		
-		//roll (1 and 3-6) -> rolled 1 skunk a 3 or a 4 or a 5 or a 6
-		if ((activePlayer.getDie1RollValue()==1 && activePlayer.getDie2RollValue()>2  ) 
-		|| ( activePlayer.getDie1RollValue()>2  && activePlayer.getDie2RollValue()==1)){
+		//roll (1 and 3-6) -> rolled 1 skunk and a 3 or a 4 or a 5 or a 6
+		if ((activePlayer.getDie1RollValue()==1 && activePlayer.getDie2RollValue() > 2 ) 
+		|| ( activePlayer.getDie1RollValue() >2 && activePlayer.getDie2RollValue()==1)){
 	
 			result = "OneSkunk";
-
 		}				
 		
 		//roll (1 and 2) -> rolled 1 skunk and 1 deuce
@@ -210,7 +215,6 @@ public class Game {
 		|| ( activePlayer.getDie1RollValue()==2 && activePlayer.getDie2RollValue()==1)){
 			
 			result = "SkunkAndDeuce";
-
 		}
 		
 		//roll (1 and 1) -> rolled 2 skunks
@@ -222,191 +226,121 @@ public class Game {
 		return result;
 	}	
 
-	
+	private void addChipsToKittyFromActivePlayer(int i) {
+		activePlayer.takeNumberOfChips(i);
+		addChipsToKitty(i);		
+	}
+
 	public void addChipsToKitty(int numberOfChipsToAddToKitty) {
-		this.numberOfChipsInKitty = this.numberOfChipsInKitty+ numberOfChipsToAddToKitty;
+		numberOfChipsInKitty = this.numberOfChipsInKitty+ numberOfChipsToAddToKitty;
 	}	
 	
-	public void setGoal(int goal) {
-		this.goal = goal;
-	}
+	private void resetActivePlayersRoundPoints() {
+		activePlayer.setRoundPoints(0);		
+	}	
 	
-	private void setPlayers(Player[] playersArray) {
-		this.players = playersArray;		
-	}
+	private void resetActivePlayersGamePoints() {
+		activePlayer.setGamePoints(0);;		
+	} 
 	
+	private void updateTurnMetrics(String penalty){
+		
+		Player activePlayer   = this.activePlayer;
+		String penaltyDetails = "#####################  PENALTY  ######################\n";	
+
+		activePlayer.setTurnsTakenInCurrentRound(activePlayer.getTurnsTakenInCurrentRound()+1);		
+		activePlayer.incrementTotalTurnsTaken();
+		
+		if(penalty.equalsIgnoreCase("OneSkunk")){
+
+			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());		
+			this.resetActivePlayersRoundPoints();	
+		 	this.addChipsToKittyFromActivePlayer(1);	
+			
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled One Skunk ::" + activePlayer.showRollDetails()+"\n");
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all round points &  1 chip (added to kitty)");
+		 	penaltyDetails = penaltyDetails + ("\n######################################################");		
+		 	
+		 	penalty = "One Skunk";
+		}
+		
+		else if(penalty.equalsIgnoreCase("TwoSkunks")){
+
+			this.resetActivePlayersGamePoints();;			
+		 	this.addChipsToKittyFromActivePlayer(4);
+		 	activePlayer.setDoubleSkunkCount(activePlayer.getDoubleSkunkCount()+1);
+		 	
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled Two Skunks ::" + activePlayer.showRollDetails()+"\n");
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all game points &  4 chips (added to kitty)");
+		 	penaltyDetails = penaltyDetails + ("\n######################################################");		
+
+		 	penalty = "Two Skunks";
+
+		}
+		
+		else if(penalty.equalsIgnoreCase("SkunkAndDeuce")){
+			
+			activePlayer.setGamePoints(activePlayer.getGamePoints()-activePlayer.getRoundPoints());	
+			this.resetActivePlayersRoundPoints();			
+		 	this.addChipsToKittyFromActivePlayer(2);	
+ 		 	
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Rolled One Skunk and a Deuce ::" + activePlayer.showRollDetails()+"\n");
+		 	penaltyDetails = penaltyDetails + (activePlayer.getName()+ " Lost: A turn, all round points &  2 chips (added to kitty)");
+		 	penaltyDetails = penaltyDetails + ("\n######################################################");		
+
+		 	penalty = "One Skunk and a Deuce";
+
+		}
+		
+		else{
+			
+			activePlayer.setTurnPoints(activePlayer.getRollValue());
+			activePlayer.setRoundPoints(activePlayer.getRoundPoints()+activePlayer.getRollValue());	
+			activePlayer.setGamePoints(activePlayer.getGamePoints()+activePlayer.getRollValue());
+		}
+		
+		if (penalty.trim().length()>0) {
+			System.out.println(penaltyDetails);	
+		}
+
+	}
+
 	public void setLastRound() {		
 
-		Player[] players  			= this.getPlayers();
-		Player[] lastRoundSequence 	= new Player[players.length];
-
-		int cap			 			= players.length;				
-		int playerLoc 	 			= getLoc(this.getActivePlayer());
+		int cap			 			= players.length;			
+		Player[] lastRoundSequence 	= new Player[cap];
+		int playerLoc 	 			= getLoc(activePlayer);
 		
 		for (int i = 0; i < cap; i++) {
 			lastRoundSequence[i] 	= players[playerLoc%cap];
 			playerLoc++;
 		}
 		this.lastRoundSequence 		= lastRoundSequence;
-		this.isLastRound 			= true;		
+		this.players=lastRoundSequence;
+		this.isLastRound 			= true;	
+		
+		for (int i = 0; i < players.length; i++) {
+			System.out.println("LR "+ i + " "+ players[i].getName());
+		}
+		activePlayerLoc = 1;
+
 	}
+
 	
-	private int getLoc(Player player){		
-		int cap = this.getPlayers().length;
+	private int getLoc(Player player){	
+		
+		int cap = players.length;
 		int loc = 0;		
 		for (int i = 0; i < cap; i++) {
-			if (this.getPlayers()[i].equals(player)) {
+			if (players[i].equals(player)) {
 				loc = i;
 			}
 		}
 		return loc;
 	}
 	
-	public void incrementRoundNumber() {
-		this.roundNumber++;
-	}	
-		
-	public void incrementDoubleSkunkCount() {
-		this.doubleSkunkCount++;		
-	}	
 	
 	
 	
-	
-	
-	public int getNumberOfChipsInKitty() {
-		return numberOfChipsInKitty;
-	}
-
-	public int getRollValue() {
-		return getActivePlayer().getRollValue();
-	}
-	
-	public int getDie1RollValue() {
-		return getActivePlayer().getDie1RollValue();
-	}
-	
-	public int getDie2RollValue() {
-		return getActivePlayer().getDie2RollValue();
-	}
-	
-	public int getDoubleSkunkCount() {
-		return this.doubleSkunkCount;
-	}
-	
-	public Player getActivePlayer() {
-		//System.out.println(this.activePlayer);
-		return this.activePlayer;
-	}
-
-	public Player[] getPlayers() {
-		return this.players;		
-	}
-
-	public boolean isLastRound() {
-		return isLastRound;
-	}	
-	
-	public int getRoundNumber() {
-		return this.roundNumber;
-	}
-		
-	public int getGoal() {
-		return this.goal;
-	}
-
-
-
-
-
-	
-	
-	
-	
- 	// gets user input and sets number of players, initializes the player array, sets active player 
-	private void setup() {
-		
-		System.out.println("Enter the number of players");
-		this.numberOfPlayers = getNumberOfPlayers();
-		System.out.println("There are "+ this.numberOfPlayers + " players");
-		
-		this.players = new Player[this.numberOfPlayers];
-		
-		for (int i = 0; i < this.players.length; i++) {
-			System.out.println("Enter Player "+ (i+1) +"'s username ");
-			String playerName = getPlayerName();
-			this.players[i] = new Player(playerName.toUpperCase());
-			this.players[i].setPlayerNumber(i+1);
-			System.out.println("Player "+  (i+1)  +"'s username is "+ playerName);
-		}
-		
-		System.out.println("\n------------------------------------------------------");
-		System.out.println("Player Info\n------------------------------------------------------");
-		for (int i = 0; i < players.length; i++) {			
-			String name = (  (i+1) < 10 ) ? " "+(i+1)+" : "+players[i].getName() : (i+1)+" : "+players[i].getName();
-			System.out.println("Player "+ name);
-		}
-		setPlayers(this.players);
-		setActivePlayerToNextPlayer();
-	}
-	
-	
-	private static int getNumberOfPlayers() {//from user as userInput	
-		
-		int result				= 0;		
-		String input 			= ""; 
-		BufferedReader reader 	= null;		
-
-		try {			
-			reader = new BufferedReader(new InputStreamReader(System.in));
-			input  = reader.readLine();
-			result = Integer.parseInt(input.trim());
-			
-		} catch (NumberFormatException d) {			
-			System.err.println("WARNING: Wrong Input format!!! Enter NUMBERS ONLY");
-			System.out.println("Enter the number of players greater than 0");
-			result = getNumberOfPlayers();
-		}
-		catch (IOException ioe) {			
-			System.err.println("WARNING: Invalid Input !!!");
-			System.out.println("Enter the number of players");
-			result = getNumberOfPlayers();
-		}	
-		
-		while (result < 2 || result > 8) {			
-			System.err.println("GAME RULE VIOLATION: #Players >=2 && <=8");
-			System.out.println("Enter the number of players");
-			result = getNumberOfPlayers();			
-		}		
-		return result;
-	}	
-	
-	
-	private static String getPlayerName(){
-		
-		String input 			= ""; 
-		BufferedReader reader 	= null;
-		
-		try {			
-			reader = new BufferedReader(new InputStreamReader(System.in));
-			input  = reader.readLine();
-			
-		}catch (Exception d) {}
-
-		while (input.trim().length() < 1) {			
-			System.err.println("GAME RULE VIOLATION: Username can not be empty");
-			System.out.println("Enter player username ");
-			input = getPlayerName();			
-		}		
-		return input;
-	}
-
-
-	public Player[] getLastRoundSequence() {
-		this.setPlayers(this.lastRoundSequence);
-		return this.getPlayers();		
-	}
-
-
 
 }

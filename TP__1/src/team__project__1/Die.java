@@ -1,5 +1,6 @@
 package team__project__1;
 
+
 public class Die{
 	private int rollValue;
 	private int rollPosition;
