@@ -192,7 +192,44 @@ public class Game {
 			}
 		}
 		System.out.println("The winner was "+ players[roundWinnerLoc].getName());
-		System.out.println("Ask how winner wants to distribute the chips");
+			
+		BufferedReader reader 	= null;
+		String input 			= "";		
+ 
+		System.out.println(players[roundWinnerLoc].getName()+ ", How Would you like to collect your Chips?");
+		System.out.println( "OPTION 1: Get 5 chips from Each Player");
+		System.out.println( "OPTION 2: Get 10 chips from every player that has a game score of 0");
+		System.out.println( " -> Enter 1 or 2");
+		 
+		try {					
+				 reader 	= new BufferedReader(new InputStreamReader(System.in));
+				 input 		= reader.readLine();	
+				 
+				 if (input.equalsIgnoreCase("1")) {
+						
+				 }
+				 else if (input.equalsIgnoreCase("1")) {
+						
+				 }
+			 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+	 		
+ 
+ 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	}
