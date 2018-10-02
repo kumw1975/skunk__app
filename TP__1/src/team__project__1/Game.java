@@ -22,8 +22,9 @@ public class Game {
 		this.activePlayerLoc 		= 0;
 		this.doubleSkunkCount 		= 0;
 		this.isLastRound 			= false;
-		//setup(); //uncomment in production
-		
+
+		setup(); //uncomment in production
+		/*
 		//Start Testing Snippet for (Dev) 
 		this.players = new Player[]{new Player("MO"), new Player("HO"), new Player("DO")};
 		this.numberOfPlayers = players.length;
@@ -38,8 +39,8 @@ public class Game {
 		//Simulate last round
 		players[1].setGamePoints(100);
 		players[1].setPreviousMetrics();
-
-		//End Testing (Dev) Snippet		
+		//End Testing (Dev) Snippet	
+		*/
 	}
 	
 	
@@ -63,16 +64,19 @@ public class Game {
 		activePlayerLoc = 0;
 	}
 
+	
+	
+	
 	private void endRound() {
 		/*
 		The winner of each game(round) collects all chips in "kitty" and 
-		in addition ﬁve chips from each losing player or 10 chips 
+		in addition five chips from each losing player or 10 chips 
 		from any player without a score. 
 		(so is this a player without a round score or a player without a turn score or a player without a game score?)
 		*/
 		
 		//get the round winner 
-		// is the round winner the one with the overall highest score (cummulative) ?
+		// is the round winner the one with the overall highest score (cumulative) ?
 		// is the round winner the one with highest score only in this round 
 		
 		int highScore   	= 0;
@@ -106,7 +110,7 @@ public class Game {
 			 
 			 if (input.equalsIgnoreCase("1")) {
 				
-				 //and in addition ﬁve chips from each losing player				 				 
+				 //and in addition five chips from each losing player				 				 
 				 for (int i = 0; i < players.length; i++) {					
 					 if (!(players[i].equals(winner))) {
 						players[i].takeNumberOfChips(5);
