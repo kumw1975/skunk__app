@@ -66,3 +66,4 @@ from any player without a score.
 	 	get Winner()
 	 	displayChipDistributionOptions()
 	 	distributeChips()
+		announceWinner()
