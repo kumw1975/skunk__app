@@ -1,10 +1,6 @@
-/**
- * 
- */
 package team__project__1__tests;
 
 import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
