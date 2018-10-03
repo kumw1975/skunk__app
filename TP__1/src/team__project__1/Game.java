@@ -486,9 +486,8 @@ public class Game {
 //		}
 		
 		//Each succeeding player receives one more chance to better the goal and end the game(round) hence i=1.
+		//so we skip the winning player i=0;
 		activePlayerLoc = 1; 
-
-
 	}
 
 	
@@ -635,28 +634,27 @@ from any player without a score.
 
 
 	 
-	 start Game:: USERINPUT ::=> #players, player names
-	 	initialize Players
-	 	
-	 	start Round()
-	 		initialize Round Metrics
-	 			Start Turn()
-	 				initialize Turn Metrics
-	 				roll()
-	 				analyze dice values
-	 				update Turn Metrics
-	 				askToRollAgain()
-	 					if y:go to roll() else: go to endTurn()
-	 			end Turn() :: 
-	 		Update Round Metrics
-	 	end Round()
-	 	
-	 	get Winner()
-	 	displayChipDistributionOptions()
-	 	distributeChips()
-	 
-	 
-	 */
+ start Game:: USERINPUT ::=> #players, player names
+ 	initialize Players
+ 	
+ 	start Round()
+ 		initialize Round Metrics
+ 			Start Turn()
+ 				initialize Turn Metrics
+ 				roll()
+ 				analyze dice values
+ 				update Turn Metrics
+ 				askToRollAgain()
+ 					if y:go to roll() else: go to endTurn()
+ 			end Turn() :: 
+ 		Update Round Metrics
+ 	end Round()
+ 	
+ 	get Winner()
+ 	displayChipDistributionOptions()
+ 	distributeChips()
+	 	 
+ */
 	
 		
 
