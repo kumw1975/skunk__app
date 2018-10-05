@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import team__project__1.Dice;
 import team__project__1.Die;
 
 /**
