@@ -12,9 +12,18 @@ public class Die{
 	*/
 	private int[] rollValues;
 	private boolean isTestableDie;
-		
-	public Die(){}
 	
+	private int lastRoll;
+	private boolean predictable = false;
+	private int[] rolls;
+	private int index_of_last_roll = 0;
+		
+	
+	
+	public Die()
+	{
+		this.roll();
+	}
 	/*
 	 This Overloaded constructor will build a predictable die based on predetermined roll (values)
 	 The random nature of rolling dice makes it tricky to test your evolving SkunkApp. 
@@ -25,7 +34,16 @@ public class Die{
 		this.rollValues = rollValues;
 		this.rollPosition=0;
 		this.isTestableDie = true;
+		
+		if(rollValues== null) 
+		{
+			throw new RuntimeException("null initializing int[] array ");
+		}
+		this.predictable = true;
+		this.rolls = rollValues; 
 	}	
+	
+	
 	
 	// getter or accessor method
 	public int getRollValue(){
