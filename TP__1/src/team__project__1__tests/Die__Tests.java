@@ -116,6 +116,9 @@ public class Die__Tests {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		System.out.println("Tested Random Die and Predictable Die");
+		System.out.println("Completed Test Suite for Die Class");
+
 	}
 
 	

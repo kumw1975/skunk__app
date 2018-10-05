@@ -108,7 +108,7 @@ public class Dice__Tests {
 		}		
 	}
 
-	@Test
+	@Test // Testing roll values of all dice
 	public final void testGetRollValue() {
 		
 		dice1.roll();  
@@ -127,7 +127,7 @@ public class Dice__Tests {
 		assertTrue(dice3Range);	
 	}
 
-	@Test
+	@Test //using get Roll value test to test ROLL
 	public final void testRoll() {
 		testGetRollValue();
 	}
