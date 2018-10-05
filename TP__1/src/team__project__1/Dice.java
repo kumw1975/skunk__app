@@ -40,7 +40,7 @@ public class Dice{
 	}
 
 	// Setter method to set the value of the instance variable. 
-	public void setRollValue(int rollValue){
+	private void setRollValue(int rollValue){
 		this.rollValue = rollValue;
 	}
 
