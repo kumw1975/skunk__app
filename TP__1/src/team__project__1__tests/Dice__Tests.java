@@ -20,8 +20,8 @@ import team__project__1.Die;
  */
 public class Dice__Tests {
 	
-	private static int[] die1ArrayValues = new int[] {1,5,3,2,6,5,3,2,3,4,2,1,2,4,3,2,3,4,5,6};
-	private static int[] die2ArrayValues = new int[] {3,2,3,6,2,3,1,5,4,3,4,2,1,5,6,5,2,2,3,4,};
+	private static int[] die1ArrayValues;
+	private static int[] die2ArrayValues;
 
 	private static Dice dice1;
 	private static Dice dice2;                
@@ -29,7 +29,10 @@ public class Dice__Tests {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		//before the class is tested a instantiate 3 Dice		
+		//before the class is tested a instantiate 3 Dice
+		die1ArrayValues = new int[] {1,5,3,2,6,5,3,2,3,4,2,1,2,4,3,2,3,4,5,6};
+		die2ArrayValues = new int[] {3,2,3,6,2,3,1,5,4,3,4,2,1,5,6,5,2,2,3,4};
+		
 		dice1 = new Dice(); //Two random Die
 		dice2 = new Dice(new Die(die1ArrayValues), new Die(die2ArrayValues));//two prdictable die
 		dice3 = new Dice(new Die(die1ArrayValues), new Die(die2ArrayValues));//One random and one Predictable
@@ -37,7 +40,10 @@ public class Dice__Tests {
 
 	@Before //Before each method reset the dice
 	public void setUp() throws Exception {
-		//before running a new test case		
+		//before running a new test case	
+		die1ArrayValues = new int[] {1,5,3,2,6,5,3,2,3,4,2,1,2,4,3,2,3,4,5,6};
+		die2ArrayValues = new int[] {3,2,3,6,2,3,1,5,4,3,4,2,1,5,6,5,2,2,3,4};
+		
 		dice1 = new Dice(); //Two random Die
 		dice2 = new Dice(new Die(die1ArrayValues), new Die(die2ArrayValues));//two predictable die
 		dice3 = new Dice(new Die(), new Die(die2ArrayValues));//One random and one Predictable
@@ -172,7 +178,7 @@ public class Dice__Tests {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.out.println("Completed Test Suiteddddd for Dice Class");
+		System.out.println("Completed Test Suite for Dice Class");
 	}
 
 }
